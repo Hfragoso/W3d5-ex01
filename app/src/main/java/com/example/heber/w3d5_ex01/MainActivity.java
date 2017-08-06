@@ -1,6 +1,7 @@
 package com.example.heber.w3d5_ex01;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -32,6 +33,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private static final String TAG = MainActivity.class.getSimpleName() + "_TAG";
     private static final String BASE_URL = "https://randomuser.me/api";
     public static final String MAIN_ACTIVITY_EXTRA = "com.example.heber.w3d5_ex01.MAIN_ACTIVITY_EXTRA";
 
@@ -79,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         helper = new DBHelper(this);
         database = helper.getWritableDatabase();
+
+        showRecordsName();
     }
 
     private void displayInfo(Result result) {
@@ -201,6 +205,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent);
                 }
                 break;
+        }
+    }
+
+    private void showRecordsName(){
+        String[] projection = {
+                FeedReaderContract.FeedEntry.COLUMN_NAME,
+        };
+
+        Cursor cursor = database.query(
+                FeedReaderContract.FeedEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()){
+            String entryName = cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME));
+            Log.d(TAG, "showRecordsName: " + entryName);
         }
     }
 }
